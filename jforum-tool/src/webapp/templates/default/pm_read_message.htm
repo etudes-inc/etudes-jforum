@@ -1,0 +1,558 @@
+<#--
+/**********************************************************************************
+ * $URL: https://source.etudes.org/svn/apps/jforum/tags/2.27/jforum-tool/src/webapp/templates/default/pm_read_message.htm $
+ * $Id: pm_read_message.htm 8540 2014-08-29 22:18:25Z murthyt $ 
+ *********************************************************************************** 
+ * 
+ * Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013, 2014 Etudes, Inc. 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
+ * 
+ * Portions completed before July 1, 2004 Copyright (c) 2003, 2004 Rafael Steil, All rights reserved, licensed under the BSD license. 
+ * http://www.opensource.org/licenses/bsd-license.php 
+ * 
+ * Redistribution and use in source and binary forms, 
+ * with or without modification, are permitted provided 
+ * that the following conditions are met: 
+ * 
+ * 1) Redistributions of source code must retain the above 
+ * copyright notice, this list of conditions and the 
+ * following disclaimer. 
+ * 2) Redistributions in binary form must reproduce the 
+ * above copyright notice, this list of conditions and 
+ * the following disclaimer in the documentation and/or 
+ * other materials provided with the distribution. 
+ * 3) Neither the name of "Rafael Steil" nor 
+ * the names of its contributors may be used to endorse 
+ * or promote products derived from this software without 
+ * specific prior written permission. 
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT 
+ * HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, 
+ * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL 
+ * THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE 
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, 
+ * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER 
+ * IN CONTRACT, STRICT LIABILITY, OR TORT 
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE 
+ ***********************************************************************************/
+ -->
+<#include "header.htm"/>
+<script>
+//for postbody div tag width
+var divPostContentWidth = document.body.offsetWidth - (32 + 32 + 8) - 180;
+
+if (divPostContentWidth < 450)
+{
+	divPostContentWidth = 450;
+}
+</script>
+<table cellspacing="0" cellpadding="10" width="100%" align="center" border="0">
+	<tbody>
+		<tr>
+			<td>
+				<#--table cellspacing="0" cellpadding="0" width="100%" align="center" border="0">
+                  <tbody>
+                    <tr>
+                      <td valign="top" align="middle" width="100%">
+                        <table height="40" cellspacing="2" cellpadding="2" border="0">
+                          <tbody>
+                          	<tr valign="center">
+                              <td> <a href="${JForumContext.encodeURL("/pm/inbox/date/d")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pm_inbox.png" border="0" alt="inbox icon"/> </a></td>
+                              <td><span class="gen"><a class="toolUiLink" href="${JForumContext.encodeURL("/pm/inbox/date/d")}">${I18n.getMessage("PrivateMessage.inbox")}</a></span>&nbsp;</td>
+                              <td> <a href="${JForumContext.encodeURL("/pm/sentbox/date/d")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pm_sentbox.png" border="0" alt="send icon"/></a></td>
+                              <td><span class="gen"><a class="toolUiLink" href="${JForumContext.encodeURL("/pm/sentbox/date/d")}">${I18n.getMessage("PrivateMessage.sentbox")}</a></span>&nbsp;</td>
+                              <td><a href="${JForumContext.encodeURL("/pm/drafts/date/d")}"> <img class="imgicon" src="${contextPath}/templates/${templateName}/images/pm_draft_folder.png" border="0" alt="send icon"/></a></td>
+                              <td><span class="gen">
+                              	<#if (userPMDraftsCount?? && userPMDraftsCount > 0)>
+                              		<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/drafts/date/d")}">${I18n.getMessage("PrivateMessage.drafts")}: (${userPMDraftsCount})</a>&nbsp;
+                              	<#else>
+                              		<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/drafts/date/d")}">${I18n.getMessage("PrivateMessage.drafts")}</a>&nbsp;
+                              	</#if>
+                              	</span>                              
+                              </td>
+                              <td>
+                              	<span class="gen">
+                              	<a class="toolUiLink"  href="${JForumContext.encodeURL("/pm/folders")}">
+									<img class="imgicon" src="${contextPath}/templates/${templateName}/images/folders.png" alt="folders icon" title="${I18n.getMessage("PrivateMessage.folders")}"/>${I18n.getMessage("PrivateMessage.folders")}
+								</a>
+								</span>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table-->
+				<br clear="all" />
+				<form name="form1" id="form1" action="${JForumContext.encodeURL("/jforum")}" method="post">
+				<input type="hidden" name="module" value="${moduleName}">
+				<input type="hidden" name="action" value="delete">
+				<input type="hidden" value="${pm.id}" name="id" />
+				<table cellspacing="2" cellpadding="2" width="100%" align="center" border="0">
+                    <tr>
+                      <td valign="top" align="right" width="100%">
+                      		<span class="gen">
+                      		<#if sort_column?? && sort_direction??>
+								<#if first??>
+									&nbsp;
+									<#if (folderId??) && (folderId > 0)>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${first.id}/${folderId}/${sort_column}/${sort_direction}")}" title="${I18n.getMessage("pm-first-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_first.png" border="0" alt="first private message icon" /></a>
+									<#else>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${first.id}/${sort_column}/${sort_direction}")}" title="${I18n.getMessage("pm-first-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_first.png" border="0" alt="first private message icon" /></a>
+									</#if>
+								<#else>
+								&nbsp;
+								<a class="toolUiLink" href="#" title="${I18n.getMessage("pm-first-message-title")}" ><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_first.png" border="0" alt="first private message icon" /></a>
+								</#if>
+								<#if previous??>
+									&nbsp;
+									<#if (folderId??) && (folderId > 0)>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${previous.id}/${folderId}/${sort_column}/${sort_direction}")}" title="${I18n.getMessage("pm-previous-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_prev.png" border="0" alt="previous private message icon" /></a>
+									<#else>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${previous.id}/${sort_column}/${sort_direction}")}" title="${I18n.getMessage("pm-previous-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_prev.png" border="0" alt="previous private message icon" /></a>
+									</#if>
+								<#else>
+								&nbsp;
+								<a class="toolUiLink" href="#" title="${I18n.getMessage("pm-previous-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_prev.png" border="0" alt="previous private message icon" /></a>
+								</#if>
+								&nbsp;
+								${navText}
+								<#if next??>
+									&nbsp;
+									<#if (folderId??) && (folderId > 0)>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${next.id}/${folderId}/${sort_column}/${sort_direction}")}" title="${I18n.getMessage("pm-next-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_next.png" border="0" alt="next private message icon" /></a>
+									<#else>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${next.id}/${sort_column}/${sort_direction}")}" title="${I18n.getMessage("pm-next-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_next.png" border="0" alt="next private message icon" /></a>
+									</#if>
+								<#else>
+								&nbsp;
+								<a class="toolUiLink" href="#" title="${I18n.getMessage("pm-next-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_next.png" border="0" alt="next private message icon" /></a>
+								</#if>
+								<#if last??>
+									&nbsp;
+									<#if (folderId??) && (folderId > 0)>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${last.id}/${folderId}/${sort_column}/${sort_direction}")}" title="${I18n.getMessage("pm-last-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_last.png" border="0" alt="last private message icon" /></a>
+									<#else>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${last.id}/${sort_column}/${sort_direction}")}" title="${I18n.getMessage("pm-last-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_last.png" border="0" alt="last private message icon" /></a>
+									</#if>
+								<#else>
+								&nbsp;
+								<a class="toolUiLink" href="#" title="${I18n.getMessage("pm-last-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_last.png" border="0" alt="last private message icon" /></a>
+								</#if>
+							<#else>
+								<#if first??>
+									&nbsp;
+									<#if (folderId??) && (folderId > 0)>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${first.id}/${folderId}")}" title="${I18n.getMessage("pm-first-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_first.png" border="0" alt="first private message icon" /></a>
+									<#else>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${first.id}")}" title="${I18n.getMessage("pm-first-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_first.png" border="0" alt="first private message icon" /></a>
+									</#if>
+								<#else>
+								&nbsp;
+								<a class="toolUiLink" href="#" title="${I18n.getMessage("pm-first-message-title")}" ><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_first.png" border="0" alt="first private message icon" /></a>
+								</#if>
+								<#if previous??>
+									&nbsp;
+									<#if (folderId??) && (folderId > 0)>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${previous.id}/${folderId}")}" title="${I18n.getMessage("pm-previous-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_prev.png" border="0" alt="previous private message icon" /></a>
+									<#else>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${previous.id}")}" title="${I18n.getMessage("pm-previous-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_prev.png" border="0" alt="previous private message icon" /></a>
+									</#if>
+								<#else>
+								&nbsp;
+								<a class="toolUiLink" href="#" title="${I18n.getMessage("pm-previous-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_prev.png" border="0" alt="previous private message icon" /></a>
+								</#if>
+								&nbsp;
+								${navText}
+								<#if next??>
+									&nbsp;
+									<#if (folderId??) && (folderId > 0)>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${next.id}/${folderId}")}" title="${I18n.getMessage("pm-next-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_next.png" border="0" alt="next private message icon" /></a>
+									<#else>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${next.id}")}" title="${I18n.getMessage("pm-next-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_next.png" border="0" alt="next private message icon" /></a>
+									</#if>
+								<#else>
+								&nbsp;
+								<a class="toolUiLink" href="#" title="${I18n.getMessage("pm-next-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_next.png" border="0" alt="next private message icon" /></a>
+								</#if>
+								<#if last??>
+									&nbsp;
+									<#if (folderId??) && (folderId > 0)>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${last.id}/${folderId}")}" title="${I18n.getMessage("pm-last-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_last.png" border="0" alt="last private message icon" /></a>
+									<#else>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${last.id}")}" title="${I18n.getMessage("pm-last-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_last.png" border="0" alt="last private message icon" /></a>
+									</#if>
+								<#else>
+								&nbsp;
+								<a class="toolUiLink" href="#" title="${I18n.getMessage("pm-last-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_last.png" border="0" alt="last private message icon" /></a>
+								</#if>
+							</#if>
+							</span>
+                      </td>
+                   	</tr>
+                </table>
+				<table class="forumline" cellspacing="1" cellpadding="4" width="100%" border="0">
+					<tbody>
+						<tr>
+							<td width="180" rowspan="4" valign="top" nowrap="nowrap">
+								<#--start left menu-->
+								<table cellspacing="1" cellpadding="3" width="100%" border="0">								
+									<tr>
+										<td>
+											<span class="gen">
+											<#if !inbox?default(false)>
+											<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/inbox/date/d")}">
+											<#else>
+											<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/inbox/date/d")}"><b>
+											</#if>
+											<img class="imgicon" src="${contextPath}/templates/${templateName}/images/pm_inbox.png" alt="inbox icon"/>${I18n.getMessage("PrivateMessage.inbox")}<#if (inboxUnreadCount??) && (inboxUnreadCount > 0)>&nbsp;<b>(${inboxUnreadCount})</b></#if>
+											<#if !inbox?default(false)>												
+											</a>
+											<#else>
+											</b></a>
+											</#if>
+											</span>								
+										</td>
+									</tr>
+									
+									<tr>
+										<td>
+											<span class="gen">
+											<#if !draftsList?default(false)>
+											<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/drafts/date/d")}">
+											<#else>
+											<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/drafts/date/d")}"><b>
+											</#if>
+											<#if (userPMDraftsCount?? && userPMDraftsCount > 0)>
+			                              		<img class="imgicon" src="${contextPath}/templates/${templateName}/images/pm_draft_folder.png" alt="pm draft icon"/>${I18n.getMessage("PrivateMessage.drafts")}: (${userPMDraftsCount}) 
+			                              	<#else>
+			                              		<img class="imgicon" src="${contextPath}/templates/${templateName}/images/pm_draft_folder.png" alt="pm draft icon"/>${I18n.getMessage("PrivateMessage.drafts")}&nbsp;
+			                              	</#if>												
+											<#if !draftsList?default(false)>
+											</a>
+											<#else>
+											</b></a>
+											</#if>
+											</span>
+										</td>
+									</tr>
+									
+									<tr>
+										<td>								
+											<span class="gen">
+											<#if !sentbox?default(false)>
+											<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/sentbox/date/d")}">
+											<#else>
+											<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/sentbox/date/d")}"><b>
+											</#if>
+											<img class="imgicon" src="${contextPath}/templates/${templateName}/images/pm_sentbox.png" alt="sent icon"/>${I18n.getMessage("PrivateMessage.sentbox")}
+											<#if !sentbox?default(false)>
+											</a>
+											<#else>
+											</b></a>
+											</#if>
+											</span>								
+										</td>
+									</tr>
+									
+									<tr>
+										<td>								
+											<span class="gen">
+											<a class="toolUiLink"  href="${JForumContext.encodeURL("/pm/folders")}">
+												<img class="imgicon" src="${contextPath}/templates/${templateName}/images/folders.png" alt="folders icon" title="${I18n.getMessage("PrivateMessage.folders")}"/>${I18n.getMessage("PrivateMessage.folders")}
+											</a>
+											</span>								
+										</td>
+									</tr>
+									<#list pmFoldersList as pmFolder>
+									<#if (pmFolder.id > 0)>									
+									<#if (pmFolder.name?trim?length > 15)>
+										<#assign pmFolderName = (pmFolder.name?trim?substring(0, 15)) + "..."/>
+									<#else>
+										<#assign pmFolderName = pmFolder.name/>									
+									</#if>
+									<tr>
+										<td valign="middle" align="left">
+											<span class="gen">
+											<#if folderId?? && folderId == pmFolder.id>
+												<img height="18" src="${contextPath}/templates/${templateName}/images/spacer.gif" width="22"/><a class="toolUiLink"  href="${JForumContext.encodeURL("/pm/messages/${pmFolder.id}")}"><b>${pmFolderName}<#if (pmFolder.unreadCount > 0)></a>&nbsp;<b>(${pmFolder.unreadCount})</b></#if></b></a>
+											<#else>
+												<img height="18" src="${contextPath}/templates/${templateName}/images/spacer.gif" width="22"/><a class="toolUiLink"  href="${JForumContext.encodeURL("/pm/messages/${pmFolder.id}")}">${pmFolderName}<#if (pmFolder.unreadCount > 0)>&nbsp;<b>(${pmFolder.unreadCount})</b></#if></a>
+											</#if>
+											
+											</span>
+										</td>
+									</tr>
+									</#if>
+									</#list>
+									
+									
+								</table>
+								
+								</td>
+								<#--end left menu-->
+							<td valign="center" width="180">
+								<#--a href="${JForumContext.encodeURL("/pm/quote/${pm.id}")}" accesskey="${I18n.getMessage("pm-reply-quote-access")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/${imagesI18n}/reply_quote.gif" border="0" alt="${I18n.getMessage("pm-reply-quote-description")}" title="${I18n.getMessage("pm-reply-quote-access-description")}"/></a-->
+								<#--Private Message Type 2 is Sent. Dont't allow to reply from the sent message-->
+								<#if pm.type != 2>
+									<span class="gen">
+									<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/quote/${pm.id}")}" accesskey="${I18n.getMessage("pm-quote-access")}" rel="nofollow"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/comments.png" alt="${I18n.getMessage("pm-quote-description")}" title="${I18n.getMessage("pm-reply-quote-access-description")}"/>${I18n.getMessage("PrivateMessage.reply")}</a>
+									</span>
+								</#if>
+							</td>
+							<td valign="center" align="right">
+								<span class="gen">
+								<#if pm.isFlagToFollowup()>
+									&nbsp;<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/flag/${pm.id}")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/clear-flag-pm.png" width="13" height="13" border="0" alt="clear follow-up icon" /> ${I18n.getMessage("PrivateMessage.clearFlag")}</a>
+								<#else>
+									&nbsp;<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/flag/${pm.id}")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/flag-pm.png" width="13" height="13" alt="follow-up icon"/> ${I18n.getMessage("PrivateMessage.addFlag")}</a>
+								</#if>
+								&nbsp;&nbsp;
+								<a class="toolUiLink" href="#" onclick="document.form1.submit();">
+									<img class="imgicon" src="${contextPath}/templates/${templateName}/images/delete.png" alt="delete icon" title="${I18n.getMessage("PrivateMessage.deleteSelected")}"/>${I18n.getMessage("PrivateMessage.deleteSelected")}
+								</a>
+								&nbsp;								
+								</span>
+							</td>
+						</tr>
+						
+											
+						<tr>
+					
+						<td valign="top" colspan="2">
+						<table cellspacing="1" cellpadding="3" width="100%" border="0">	
+					
+						<tr>
+							<#--Private Message Type 2 is Sent-->
+							<th class="thHead" nowrap="nowrap" colspan="4">
+								<#if pm.type == 2>
+									${I18n.getMessage("PrivateMessage.sentboxMessage")}
+								<#else>
+									<#if (folderId??) && (folderId > 0)>
+										<#if privateMessageFolder??>
+										${privateMessageFolder.name}&nbsp;${I18n.getMessage("PrivateMessage.folderMessage")}
+										</#if>
+									<#else>
+										${I18n.getMessage("PrivateMessage.inboxMessage")}
+									</#if>
+								</#if>
+							</th>
+						</tr>
+						<tr>
+							<td class="row2"><img src="${contextPath}/templates/${templateName}/images/spacer.gif" width="12"/></td>					
+							<td class="row2"><span class="gen">${I18n.getMessage("PrivateMessage.from")}:</span></td>
+							<td class="row2" width="100%" colspan="2"><span class="gen"><a class="toolUiLink" href="${JForumContext.encodeURL("/user/profile/${pm.fromUser.id}")}">${pm.fromUser.firstName?default("")} ${pm.fromUser.lastName?default("")}</a></span></td>
+						</tr>
+						<tr>
+							<td class="row2"><img src="${contextPath}/templates/${templateName}/images/spacer.gif" width="12"/></td>
+							<td class="row2"><span class="gen">${I18n.getMessage("PrivateMessage.to")}:</span></td>
+							<td class="row2" width="100%" colspan="2"><span class="gen"><a class="toolUiLink" href="${JForumContext.encodeURL("/user/profile/${pm.toUser.id}")}">${pm.toUser.firstName?default("")} ${pm.toUser.lastName?default("")}</a></span></td>
+						</tr>
+						<#if pm.type == 2>
+						<tr>
+							<td class="row2"><img src="${contextPath}/templates/${templateName}/images/spacer.gif" width="12"/></td>
+							<td class="row2"><span class="gen">${I18n.getMessage("PrivateMessage.bcc")}:</span></td>
+							<td class="row2" width="100%" colspan="2">
+								<span class="gen">
+									<#assign count = 0/>
+									<#list pm.bccUsers as bccUser>
+										<#assign count = count + 1/>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/user/profile/${bccUser.id}")}">${bccUser.firstName?default("")} ${bccUser.lastName?default("")}</a><#if count != pm.bccUsers.size()>,</#if>											
+									</#list>
+								</span>
+							</td>
+						</tr>
+						</#if>
+						<tr>
+							<td class="row2"><img src="${contextPath}/templates/${templateName}/images/spacer.gif" width="12"/></td>
+							<td class="row2"><span class="gen">${I18n.getMessage("PrivateMessage.date")}:</span></td>
+							<td class="row2" width="100%" colspan="2"><span class="gen">${DateUtil.getStringFromDate(pm.post.time)}</span></td>
+						</tr>
+						<tr>
+							<td class="row2"><img height="18" src="${contextPath}/templates/${templateName}/images/spacer.gif" width="12"/></td>
+							<td class="row2"><span class="gen">${I18n.getMessage("PrivateMessage.subject")}:</span></td>
+							<td class="row2" width="100%"><span class="gen">${pm.post.subject}</span></td>
+							<td class="row2" nowrap="nowrap" align="right">
+								<#--a href="${JForumContext.encodeURL("/pm/quote/${pm.id}")}"accesskey="${I18n.getMessage("pm-quote-access")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/${imagesI18n}/icon_quote.gif" border="0" alt="${I18n.getMessage("pm-quote-description")}" title="${I18n.getMessage("pm-quote-access-description")}"/></a-->
+								<#--Private Message Type 2 is Sent. Dont't allow to reply from the sent message--> 
+								<#if pm.type != 2>
+									<span class="gen">
+									<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/quote/${pm.id}")}" accesskey="${I18n.getMessage("pm-quote-access")}" rel="nofollow"><img class="imgicon" class="imgicon" src="${contextPath}/templates/${templateName}/images/comments.png" alt="${I18n.getMessage("pm-quote-description")}" title="${I18n.getMessage("pm-reply-quote-access-description")}"/>${I18n.getMessage("PostShow.quote")}</a>
+									</span>
+								</#if>
+							</td>
+						</tr>
+						<tr>
+							<td class="row1"><img src="${contextPath}/templates/${templateName}/images/spacer.gif" width="12"/></td>
+							<td class="row1" valign="top" colspan="3">
+								<script>
+								document.write ('<div class="postbody" style="width:'+ divPostContentWidth +'px; overflow:auto;">');
+								</script>
+								<span class="postbody">${pm.post.text?default("")}</span>
+								<script>
+								document.write ('</div>');
+								</script>									
+								<span class="postbody">
+								<#if (pm.fromUser.attachSignatureEnabled && pm.fromUser.signature?exists && pm.post.isSignatureEnabled())>
+								<hr/>
+								${pm.fromUser.signature}
+								</#if>
+								</span>
+							</td>
+						</tr>
+						
+						<tr>
+							<td class="row1"><img src="${contextPath}/templates/${templateName}/images/spacer.gif" width="12"/></td>
+							<!-- Message -->
+							<td class="row1" valign="top" valign="top" colspan="3">
+								<!-- Attachments -->
+								<#if pm.post.hasAttachments()>
+									<#assign attachments =pm.post.attachments/>
+	
+									<#include "post_show_attachments_inc.htm"/>
+								</#if>
+							</td>
+						</tr>	
+						
+						
+					
+						</table>
+						</td>
+						</tr>
+						
+						<tr>
+							<td class="catBottom" align="right" colspan="2" height="28">								
+								&nbsp;
+							</td>
+						</tr>
+					
+					
+						<tr>
+							<td valign="center">
+								
+								<#--Private Message Type 2 is Sent. Dont't allow to reply from the sent message-->
+								<#if pm.type != 2>
+									<span class="gen">
+									<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/quote/${pm.id}")}" accesskey="${I18n.getMessage("pm-quote-access")}" rel="nofollow"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/comments.png" alt="${I18n.getMessage("pm-quote-description")}" title="${I18n.getMessage("pm-reply-quote-access-description")}"/>${I18n.getMessage("PrivateMessage.reply")}</a>
+									</span>
+								</#if>
+							</a>
+							</td>
+
+							<td valign="center" align="right">
+								<span class="gen">
+								<#if pm.isFlagToFollowup()>
+									&nbsp;<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/flag/${pm.id}")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/clear-flag-pm.png" width="13" height="13" border="0" alt="clear follow-up icon" /> ${I18n.getMessage("PrivateMessage.clearFlag")}</a>
+								<#else>
+									&nbsp;<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/flag/${pm.id}")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/flag-pm.png" width="13" height="13" alt="follow-up icon"/> ${I18n.getMessage("PrivateMessage.addFlag")}</a>
+								</#if>
+								&nbsp;&nbsp;
+								<a class="toolUiLink" href="#" onclick="document.form1.submit();">
+									<img class="imgicon" class="imgicon" src="${contextPath}/templates/${templateName}/images/delete.png" alt="delete icon" title="${I18n.getMessage("PrivateMessage.deleteSelected")}"/>${I18n.getMessage("PrivateMessage.deleteSelected")}
+								</a>
+								&nbsp;
+								</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<table cellspacing="2" cellpadding="2" width="100%" align="center" border="0">
+                    <tr>
+                      <td valign="top" align="right" width="100%">
+                      		<span class="gen">
+                      		<#if sort_column?? && sort_direction??>
+								<#if first??>
+								&nbsp;
+								<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${first.id}/${sort_column}/${sort_direction}")}" title="${I18n.getMessage("pm-first-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_first.png" border="0" alt="first private message icon" /></a>
+								<#else>
+								&nbsp;
+								<a class="toolUiLink" href="#" title="${I18n.getMessage("pm-first-message-title")}" ><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_first.png" border="0" alt="first private message icon" /></a>
+								</#if>
+								<#if previous??>
+								&nbsp;
+								<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${previous.id}/${sort_column}/${sort_direction}")}" title="${I18n.getMessage("pm-previous-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_prev.png" border="0" alt="previous private message icon" /></a>
+								<#else>
+								&nbsp;
+								<a class="toolUiLink" href="#" title="${I18n.getMessage("pm-previous-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_prev.png" border="0" alt="previous private message icon" /></a>
+								</#if>
+								&nbsp;
+								${navText}
+								<#if next??>
+								&nbsp;
+								<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${next.id}/${sort_column}/${sort_direction}")}" title="${I18n.getMessage("pm-next-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_next.png" border="0" alt="next private message icon" /></a>
+								<#else>
+								&nbsp;
+								<a class="toolUiLink" href="#" title="${I18n.getMessage("pm-next-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_next.png" border="0" alt="next private message icon" /></a>
+								</#if>
+								<#if last??>
+								&nbsp;
+								<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${last.id}/${sort_column}/${sort_direction}")}" title="${I18n.getMessage("pm-last-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_last.png" border="0" alt="last private message icon" /></a>
+								<#else>
+								&nbsp;
+								<a class="toolUiLink" href="#" title="${I18n.getMessage("pm-last-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_last.png" border="0" alt="last private message icon" /></a>
+								</#if>
+							<#else>
+								<#if first??>
+								&nbsp;
+								<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${first.id}")}" title="${I18n.getMessage("pm-first-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_first.png" border="0" alt="first private message icon" /></a>
+								<#else>
+								&nbsp;
+								<a class="toolUiLink" href="#" title="${I18n.getMessage("pm-first-message-title")}" ><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_first.png" border="0" alt="first private message icon" /></a>
+								</#if>
+								<#if previous??>
+								&nbsp;
+								<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${previous.id}")}" title="${I18n.getMessage("pm-previous-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_prev.png" border="0" alt="previous private message icon" /></a>
+								<#else>
+								&nbsp;
+								<a class="toolUiLink" href="#" title="${I18n.getMessage("pm-previous-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_prev.png" border="0" alt="previous private message icon" /></a>
+								</#if>
+								&nbsp;
+								${navText}
+								<#if next??>
+								&nbsp;
+								<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${next.id}")}" title="${I18n.getMessage("pm-next-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_next.png" border="0" alt="next private message icon" /></a>
+								<#else>
+								&nbsp;
+								<a class="toolUiLink" href="#" title="${I18n.getMessage("pm-next-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_next.png" border="0" alt="next private message icon" /></a>
+								</#if>
+								<#if last??>
+								&nbsp;
+								<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/read/${last.id}")}" title="${I18n.getMessage("pm-last-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_last.png" border="0" alt="last private message icon" /></a>
+								<#else>
+								&nbsp;
+								<a class="toolUiLink" href="#" title="${I18n.getMessage("pm-last-message-title")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/pager_last.png" border="0" alt="last private message icon" /></a>
+								</#if>
+							</#if>
+							</span>
+                      </td>
+                   	</tr>
+                </table>	
+					
+				</form>
+				<div align="center"></div>
+		  </td>
+		</tr>
+	</tbody>
+</table>
+<#include "bottom.htm"/>

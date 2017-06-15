@@ -1,0 +1,546 @@
+<#--
+/**********************************************************************************
+ * $URL: https://source.etudes.org/svn/apps/jforum/tags/2.27/jforum-tool/src/webapp/templates/default/recent_thread.htm $
+ * $Id: recent_thread.htm 9155 2014-11-10 19:35:49Z murthyt $ 
+ *********************************************************************************** 
+ * 
+ * Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013, 2014 Etudes, Inc. 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
+ * 
+ * Portions completed before July 1, 2004 Copyright (c) 2003, 2004 Rafael Steil, All rights reserved, licensed under the BSD license. 
+ * http://www.opensource.org/licenses/bsd-license.php 
+ * 
+ * Redistribution and use in source and binary forms, 
+ * with or without modification, are permitted provided 
+ * that the following conditions are met: 
+ * 
+ * 1) Redistributions of source code must retain the above 
+ * copyright notice, this list of conditions and the 
+ * following disclaimer. 
+ * 2) Redistributions in binary form must reproduce the 
+ * above copyright notice, this list of conditions and 
+ * the following disclaimer in the documentation and/or 
+ * other materials provided with the distribution. 
+ * 3) Neither the name of "Rafael Steil" nor 
+ * the names of its contributors may be used to endorse 
+ * or promote products derived from this software without 
+ * specific prior written permission. 
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT 
+ * HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, 
+ * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL 
+ * THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE 
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, 
+ * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER 
+ * IN CONTRACT, STRICT LIABILITY, OR TORT 
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE 
+ ***********************************************************************************/
+ -->
+<#include "header.htm"/>
+<#import "../macros/pagination.ftl" as pagination>
+<#import "../macros/presentation.ftl" as presentation/>
+
+<link rel="alternate" type="application/rss+xml" title="RSS" href="${contextPath}/rss/recentTopics${extension}" />
+
+<table cellspacing="0" cellpadding="10" width="100%" align="center" border="0">
+	<tr>
+		<td valign="top">
+		
+			<table cellspacing="0" cellpadding="2" width="100%" align="center" border="0">
+				<tr>
+					<td valign="bottom" align="left" nowrap="nowrap">
+						<span class="maintitle1"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/recent_topics.png" alt="recent topics icon"/>${I18n.getMessage("ForumBase.recentTopics")}</span>
+					</td>
+				</tr>
+			</table>
+			<#assign zdivindex = 500/>
+			<table class="forumline" cellspacing="1" cellpadding="4" width="100%" border="0">
+				<tr>
+					<th class="thCornerL" nowrap="nowrap" align="middle" colspan="2" height="25">&nbsp;${I18n.getMessage("ForumIndex.topics")}&nbsp;</th>
+					<th class="thTop" nowrap="nowrap" align="middle" width="50">&nbsp;${I18n.getMessage("ForumIndex.answers")}&nbsp;</th>
+					<#if !facilitator && !observer>
+						<th class="thTop" nowrap="nowrap" align="middle" width="50">&nbsp;</th>
+					</#if>
+					<th class="thTop" nowrap="nowrap" align="middle" width="150">&nbsp;${I18n.getMessage("ForumIndex.scores")}&nbsp;</th>
+					<th class="thTop" nowrap="nowrap" align="middle" width="150">&nbsp;${I18n.getMessage("ForumIndex.author")}&nbsp;</th>
+					<th class="thTop" nowrap="nowrap" align="middle">&nbsp;${I18n.getMessage("ForumIndex.lastMessage")}&nbsp;</th>
+					<th class="thCornerR" nowrap="nowrap" align="middle">&nbsp;${I18n.getMessage("Forums.Form.ForumName")}&nbsp;</th>
+				</tr>
+
+				<!-- TOPICS LISTING -->
+				<#list topics as topic>
+				
+				<#assign specialAccessUserTopic = false/>
+				<#assign generalUserAccessTopic = false/>
+				<#assign specialAccessUserAccessTopic = false/>
+				<#assign specialAccessUserAccessTopicLocked = false/>
+				
+				<#if (!facilitator && !observer) && (topic.specialAccess.size() == 1)>
+					
+					<#assign specialAccessUserTopic = true/>
+					
+					<#assign specialAccess = topic.specialAccess.get(0)>
+					
+					<#if (specialAccess.accessDates.openDate??)>
+						<#if (specialAccess.accessDates.openDate?datetime lt nowDate?datetime)>
+							<#if (specialAccess.accessDates.dueDate??)>
+								<#if (specialAccess.accessDates.dueDate?datetime lt nowDate?datetime)>
+									<#assign specialAccessUserAccessTopic = true/>
+									<#if (specialAccess.accessDates.isLocked())>
+										<#assign specialAccessUserAccessTopicLocked = true/>
+									</#if>
+								<#else>
+									<#assign specialAccessUserAccessTopic = true/>
+								</#if>
+							<#else>
+								<#assign specialAccessUserAccessTopic = true/>
+							</#if>
+						</#if>
+					<#else>
+						<#if (specialAccess.accessDates.dueDate??)>
+							<#if (specialAccess.accessDates.dueDate?datetime lt nowDate?datetime)>
+								<#assign specialAccessUserAccessTopic = true/>
+								<#if (specialAccess.accessDates.isLocked())>
+									<#assign specialAccessUserAccessTopicLocked = true/>
+								</#if>
+							<#else>
+								<#assign specialAccessUserAccessTopic = true/>
+							</#if>
+						<#else>
+							<#assign specialAccessUserAccessTopic = true/>
+						</#if>
+					</#if>
+
+								
+				</#if>
+				
+				<#if (!specialAccessUserTopic)>
+					<#assign generalUserAccessTopic = true/>
+				</#if>
+					
+				<tr>
+					<td class="row1" valign="center" align="middle" width="20">
+						<#if facilitator || observer || generalUserAccessTopic>
+							<@presentation.folderImage topic/>
+						<#elseif (specialAccessUserTopic && specialAccessUserAccessTopic)>
+							<@presentation.folderImageSpecialAccess topic, specialAccess/>
+						</#if>
+					</td>
+					<td class="row1" width="90%">
+						<#if (!facilitator && !observer)>
+							<#if ((topic.getForum().getCategory().isGradable() && topic.getForum().getCategory().getBlocked()) || ((topic.getForum().getGradeType() == 2) && (topic.getForum().getBlocked()))
+								|| ((topic.isGradeTopic() || topic.isExportTopic()) && topic.getBlocked()))>
+								<span class="gen">
+								<#if (topic.title?length == 0)>No Subject<#else>${topic.title?html}</#if>
+								</span>
+							<#else>
+								<span class="gen">
+								<a class="toolUiLink" href="${JForumContext.encodeURL("/posts/list/${topic.id}")}"><#if (topic.title?length == 0)>No Subject<#else>${topic.title?html}</#if></a>
+								</span>
+		
+								<#if topic.paginate>
+									<span class="gensmall">
+									<br />
+									<@pagination.littlePostPagination topic.id, postsPerPage, topic.totalReplies/>				
+									</span>
+								</#if>
+							</#if>
+						<#else>
+							<span class="gen">
+							<a class="toolUiLink" href="${JForumContext.encodeURL("/posts/list/${topic.id}")}"><#if (topic.title?length == 0)>No Subject<#else>${topic.title?html}</#if></a>
+							</span>
+	
+							<#if topic.paginate>
+								<span class="gensmall">
+								<br />
+								<@pagination.littlePostPagination topic.id, postsPerPage, topic.totalReplies/>				
+								</span>
+							</#if>
+						</#if>	
+					</td>
+
+					<#assign totalReplies = topic.totalReplies + 1/>
+					<td class="row2" valign="center" align="middle"><span class="gen">${totalReplies}</span></td>
+					
+					<#if !facilitator && !observer>
+					<td class="row2" valign="center" align="center">
+						<span class="gen">
+							<#if topic.getForum().getCategory().isGradable() && topic.getForum().getCategory().getBlocked()>
+								<#assign zdivindex = zdivindex - 1/>
+								<div class="confirmpanel1" style="z-index:${zdivindex}">
+								<span class="gen">
+								<a class="toolUiLink" href="#" onclick="showElement('cat_pre_req_${topic.forum.category.id}');return false;"><img src="${contextPath}/templates/${templateName}/images/lock.png" alt="${I18n.getMessage("Prerequisite.Title")}"/></br>${I18n.getMessage("Prerequisite.Title")}</a>
+								</span>
+								
+								<#assign zdivindex = zdivindex - 1/>
+								<div class="confirmpanel2" style="display:none;z-index:${zdivindex}" id="cat_pre_req_${topic.forum.category.id}">
+								<table cellpadding="2" cellspacing="2" width="100%">
+								<tr>
+									<td colspan="2" align="left">
+										<span class="gen">
+											<#if topic.forum.category.blockedByDetails??>&nbsp;${topic.forum.category.blockedByDetails}</#if>
+											<ul>
+												<#if topic.getForum().getCategory().blockedByTitle??>
+												<li>${topic.getForum().getCategory().blockedByTitle}</li>
+												</#if>
+											</ul>
+										</span>
+									</td>
+								</tr>
+								<tr>
+									<td width="50">
+										&nbsp;
+									</td>
+									<td style="" align="left">
+										&nbsp;&nbsp;<input type="button" value="OK" onclick="hideElement('cat_pre_req_${topic.forum.category.id}');return false;" style="padding-left:2em; background: #eee url('${contextPath}/templates/${templateName}/images/ok.png') .2em no-repeat;"/>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										&nbsp;
+									</td>
+								</tr>
+								</table>
+								</div>
+								
+								</div>
+							<#elseif (topic.getForum().getGradeType() == 2) && (topic.getForum().getBlocked())>
+								<#assign zdivindex = zdivindex - 1/>
+								<div class="confirmpanel1" style="z-index:${zdivindex}">
+								<span class="gen">
+								<a class="toolUiLink" href="#" onclick="showElement('frm_pre_req_${topic.getForum().id}');return false;"><img src="${contextPath}/templates/${templateName}/images/lock.png" alt="${I18n.getMessage("Prerequisite.Title")}"/></br>${I18n.getMessage("Prerequisite.Title")}</a>
+								</span>
+								
+								<#assign zdivindex = zdivindex - 1/>
+								<div class="confirmpanel2" style="display:none;z-index:${zdivindex}" id="frm_pre_req_${topic.getForum().id}">
+								<table cellpadding="2" cellspacing="2" width="100%">
+								<tr>
+									<td colspan="2" align="left">
+										<span class="gen">
+											<#if topic.getForum().blockedByDetails??>&nbsp;${topic.getForum().blockedByDetails}</#if>
+											<ul>
+												<#if topic.getForum().blockedByTitle??>
+												<li>${topic.getForum().blockedByTitle}</li>
+												</#if>
+											</ul>
+										</span>
+									</td>
+								</tr>
+								<tr>
+									<td width="50">
+										&nbsp;
+									</td>
+									<td style="" align="left">
+										&nbsp;&nbsp;<input type="button" value="OK" onclick="hideElement('frm_pre_req_${topic.getForum().id}');return false;" style="padding-left:2em; background: #eee url('${contextPath}/templates/${templateName}/images/ok.png') .2em no-repeat;"/>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										&nbsp;
+									</td>
+								</tr>
+								</table>
+								</div>
+								
+								</div>
+							<#elseif ((topic.isGradeTopic() || topic.isExportTopic()) && (topic.getBlocked()))>
+								<#assign zdivindex = zdivindex - 1/>
+								<div class="confirmpanel1" style="z-index:${zdivindex}">
+								<span class="gen">
+								<a class="toolUiLink" href="#" onclick="showElement('topic_pre_req_${topic.id}');return false;"><img src="${contextPath}/templates/${templateName}/images/lock.png" alt="${I18n.getMessage("Prerequisite.Title")}"/></br>${I18n.getMessage("Prerequisite.Title")}</a>
+								</span>
+								
+								<#assign zdivindex = zdivindex - 1/>
+								<div class="confirmpanel2" style="display:none;z-index:${zdivindex}" id="topic_pre_req_${topic.id}">
+								<table cellpadding="2" cellspacing="2" width="100%">
+								<tr>
+									<td colspan="2" align="left">
+										<span class="gen">
+											<#if topic.blockedByDetails??>&nbsp;${topic.blockedByDetails}</#if>
+											<ul>
+												<#if topic.blockedByTitle??>
+												<li>${topic.blockedByTitle}</li>
+												</#if>
+											</ul>
+										</span>
+									</td>
+								</tr>
+								<tr>
+									<td width="50">
+										&nbsp;
+									</td>
+									<td style="" align="left">
+										&nbsp;&nbsp;<input type="button" value="OK" onclick="hideElement('topic_pre_req_${topic.id}');return false;" style="padding-left:2em; background: #eee url('${contextPath}/templates/${templateName}/images/ok.png') .2em no-repeat;"/>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										&nbsp;
+									</td>
+								</tr>
+								</table>
+								</div>
+								
+								</div>
+							</#if>
+						</span>
+					</td>
+					</#if>
+					
+					<td class="row2" valign="center" align="center" nowrap="nowrap">
+						<span class="gen">
+						<#if (topic.isGradeTopic())>
+							<#if facilitator || observer>
+								<#--img src="${contextPath}/templates/${templateName}/images/grade.png" alt="grade topics"/>
+								<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalTopicList/${topic.id}/name/a")}">${I18n.getMessage("ForumIndex.gradeTopic")}</a-->
+								<#if observer>
+										${I18n.getMessage("ForumListing.grade.notApplicable")}
+								<#elseif topic.getEvaluationStatus()??>
+									<#assign topicEvalStatus = topic.getEvaluationStatus()/>
+									<#if topicEvalStatus == "TO_BE_EVALUATED">
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalTopicList/${topic.id}/name/a")}">
+										<img class="imgicon" src="${contextPath}/templates/${templateName}/images/grade.png" alt="grade icon" title="${I18n.getMessage("topic-users-grading-title")}"/>${I18n.getMessage("ForumIndex.gradeTopic")}
+										</a>
+									<#elseif topicEvalStatus == "EVALUATED">
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalTopicList/${topic.id}/name/a")}">
+										<img class="imgicon" src="${contextPath}/templates/${templateName}/images/grade_student.png" alt="grade student icon" title="${I18n.getMessage("evaluated-grading-title")}"/>${I18n.getMessage("ForumIndex.gradeTopic")}
+										</a>
+									<#elseif topicEvalStatus == "NO_POSTS_NO_EVALS">
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalTopicList/${topic.id}/name/a")}">
+										<img class="imgicon" src="${contextPath}/templates/${templateName}/images/information.png" alt="information icon" title="${I18n.getMessage("grading-users-no-posts-no-evals-title")}"/>${I18n.getMessage("ForumIndex.gradeTopic")}
+										</a>
+									<#else>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalTopicList/${topic.id}/name/a")}">
+											${I18n.getMessage("ForumIndex.gradeTopic")}
+										</a>
+									</#if>
+								<#else>
+									<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalTopicList/${topic.id}/name/a")}">
+										${I18n.getMessage("ForumIndex.gradeTopic")}
+									</a>
+								</#if>								
+							<#elseif (topic.getBlocked())>
+								<#--${I18n.getMessage("ForumIndex.viewTopicGrade")}-->
+								${I18n.getMessage("ForumListing.evaluationNoScores")}
+							<#else>
+								<#if ((topic.getForum().getAccessType() == 2) && (!topic.getForum().isGroupUser()))>
+								<#else>
+									<#if (topic.userEvaluation??)>
+										<#assign topicEvalReviewedStatus = topic.userEvaluation.getEvaluationReviewedStatus()>
+										<#if topicEvalReviewedStatus == "NO_POSTS">
+											${I18n.getMessage("ForumListing.evaluationNoPosts")}
+										<#elseif topicEvalReviewedStatus == "NOT_RELEASED">
+											<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/viewTopicGrade/${topic.id}")}">
+												${I18n.getMessage("ForumIndex.viewGrade")}
+											</a>
+										<#elseif topicEvalReviewedStatus == "NOT_REVIEWED">
+											<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/viewTopicGrade/${topic.id}")}">
+											<img class="imgicon" src="${contextPath}/templates/${templateName}/images/eval-not-reviewed.png" alt="scores not reviewed icon" title="${I18n.getMessage("view-topic-grade-not-reviewed-title")}"/>${I18n.getMessage("ForumIndex.viewGrade")}
+											</a>
+										<#elseif topicEvalReviewedStatus == "REVIEWED">
+											<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/viewTopicGrade/${topic.id}")}">
+											<img class="imgicon" src="${contextPath}/templates/${templateName}/images/eval-reviewed.png" alt="scores reviewed icon" title="${I18n.getMessage("view-topic-grade-reviewed-title")}"/>${I18n.getMessage("ForumIndex.viewGrade")}
+											</a>
+										</#if>														
+									<#else>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/viewTopicGrade/${topic.id}")}">
+											${I18n.getMessage("ForumListing.notGradedOrReleased")}
+										</a>
+									</#if>
+								</#if>
+							</#if>
+						<#--elseif (forums.get(topic_index).getGradeType() == 2)-->
+						<#elseif (topic.getForum().getGradeType() == 2)>
+							<#if facilitator || observer>
+								<#--img src="${contextPath}/templates/${templateName}/images/grade.png" alt="grade forum"/>
+								<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalForumList/${topic.getForum().getId()}/name/a")}">${I18n.getMessage("ForumIndex.gradeForum")}</a-->
+								<#if observer>
+									${I18n.getMessage("ForumListing.grade.notApplicable")}
+								<#elseif topic.getForum().getEvaluationStatus()??>
+									<#assign forumEvalStatus = topic.getForum().getEvaluationStatus()/>
+									<#if forumEvalStatus == "TO_BE_EVALUATED">
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalForumList/${topic.getForum().getId()}/name/a")}">
+										<img class="imgicon" src="${contextPath}/templates/${templateName}/images/grade.png" alt="grade icon" title="${I18n.getMessage("forum-users-grading-title")}"/>${I18n.getMessage("ForumListing.gradeForum")}
+										</a>
+									<#elseif forumEvalStatus == "EVALUATED">
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalForumList/${topic.getForum().getId()}/name/a")}">
+										<img class="imgicon" src="${contextPath}/templates/${templateName}/images/grade_student.png" alt="grade student icon" title="${I18n.getMessage("evaluated-grading-title")}"/>${I18n.getMessage("ForumListing.gradeForum")}
+										</a>
+									<#elseif forumEvalStatus == "NO_POSTS_NO_EVALS">
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalForumList/${topic.getForum().getId()}/name/a")}">
+											<img class="imgicon" src="${contextPath}/templates/${templateName}/images/information.png" alt="information icon" title="${I18n.getMessage("grading-users-no-posts-no-evals-title")}"/>${I18n.getMessage("ForumListing.gradeForum")}
+										</a>
+									<#else>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalForumList/${topic.getForum().getId()}/name/a")}">
+											${I18n.getMessage("ForumListing.gradeForum")}
+										</a>
+									</#if>
+								<#else>
+									<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalForumList/${topic.getForum().getId()}/name/a")}">
+										${I18n.getMessage("ForumListing.gradeForum")}
+									</a>
+								</#if>
+							<#elseif (topic.getForum().getBlocked())>
+								<#--${I18n.getMessage("ForumIndex.viewForumGrade")}-->
+								${I18n.getMessage("ForumListing.evaluationNoScores")}
+							<#else>
+								<#if ((topic.getForum().getAccessType() == 2) && (!topic.getForum().isGroupUser()))>
+								<#else>
+									<#if (topic.getForum().userEvaluation??)>
+										<#assign forumEvalReviewedStatus = topic.getForum().userEvaluation.getEvaluationReviewedStatus()>
+										<#if forumEvalReviewedStatus == "NO_POSTS">
+											${I18n.getMessage("ForumListing.evaluationNoPosts")}							
+										<#elseif forumEvalReviewedStatus == "NOT_RELEASED">
+											<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/viewForumGrade/${topic.getForum().getId()}")}">
+											${I18n.getMessage("ForumListing.viewForumGrade")}
+											</a>
+										<#elseif forumEvalReviewedStatus == "NOT_REVIEWED">
+											<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/viewForumGrade/${topic.getForum().getId()}")}">
+											<img class="imgicon" src="${contextPath}/templates/${templateName}/images/eval-not-reviewed.png" alt="scores not reviewed icon" title="${I18n.getMessage("view-forum-grade-not-reviewed-title")}"/>${I18n.getMessage("ForumListing.viewForumGrade")}
+											</a>
+										<#elseif forumEvalReviewedStatus == "REVIEWED">
+											<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/viewForumGrade/${topic.getForum().getId()}")}">
+											<img class="imgicon" src="${contextPath}/templates/${templateName}/images/eval-reviewed.png" alt="scores reviewed icon" title="${I18n.getMessage("view-forum-grade-reviewed-title")}"/>${I18n.getMessage("ForumListing.viewForumGrade")}
+											</a>
+										</#if>														
+									<#else>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/viewForumGrade/${topic.getForum().getId()}")}">
+											<#--${I18n.getMessage("ForumListing.viewForumGrade")}-->
+											${I18n.getMessage("ForumListing.notGradedOrReleased")}
+										</a>
+									</#if>
+								</#if>
+							</#if>
+						<#else>
+							<#if topic.getForum().getCategory().isGradable()>
+								<#if facilitator || observer>
+									<#--img src="${contextPath}/templates/${templateName}/images/grade.png" alt="grade category"/>
+									<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalCategoryList/${topic.getForum().getCategory().getId()}/name/a")}">${I18n.getMessage("ForumIndex.gradeCategory")}</a-->
+									<#if observer>
+										${I18n.getMessage("ForumListing.grade.notApplicable")}
+									<#elseif topic.getForum().getCategory().getEvaluationStatus()??>
+										<#assign catEvalStatus = topic.getForum().getCategory().getEvaluationStatus()/>
+										<#if catEvalStatus == "TO_BE_EVALUATED">
+											<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalCategoryList/${topic.getForum().getCategory().getId()}/name/a")}">
+												<img class="imgicon" src="${contextPath}/templates/${templateName}/images/grade.png" alt="grade icon" title="${I18n.getMessage("category-users-grading-title")}"/>${I18n.getMessage("ForumListing.gradeCategory")}
+											</a>
+										<#elseif catEvalStatus == "EVALUATED">
+											<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalCategoryList/${topic.getForum().getCategory().getId()}/name/a")}">
+												<img class="imgicon" src="${contextPath}/templates/${templateName}/images/grade_student.png" alt="grade student icon" title="${I18n.getMessage("evaluated-grading-title")}"/>${I18n.getMessage("ForumListing.gradeCategory")}
+											</a>
+										<#elseif catEvalStatus == "NO_POSTS_NO_EVALS">
+											<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalCategoryList/${topic.getForum().getCategory().getId()}/name/a")}">
+												<img class="imgicon" src="${contextPath}/templates/${templateName}/images/information.png" alt="information icon" title="${I18n.getMessage("grading-users-no-posts-no-evals-title")}"/>${I18n.getMessage("ForumListing.gradeCategory")}
+											</a>
+										<#else>
+											<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalCategoryList/${topic.getForum().getCategory().getId()}/name/a")}">
+												${I18n.getMessage("ForumListing.gradeCategory")}
+											</a>
+										</#if>
+									<#else>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalCategoryList/${topic.getForum().getCategory().getId()}/name/a")}">
+											${I18n.getMessage("ForumListing.gradeCategory")}
+										</a>
+									</#if>
+								<#elseif (topic.getForum().getCategory().getBlocked())>
+									<#--${I18n.getMessage("ForumIndex.viewCategoryGrade")}-->
+									${I18n.getMessage("ForumListing.evaluationNoScores")}
+								<#else>
+									<#if (topic.getForum().getCategory().userEvaluation??)>
+									<#assign categoryEvalReviewedStatus = topic.getForum().getCategory().userEvaluation.getEvaluationReviewedStatus()>
+										<#if categoryEvalReviewedStatus == "NO_POSTS">
+											${I18n.getMessage("ForumListing.evaluationNoPosts")}									
+										<#elseif categoryEvalReviewedStatus == "NOT_RELEASED">
+											<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/viewCategoryGrade/${topic.getForum().getCategory().getId()}")}">
+												${I18n.getMessage("ForumListing.viewCategoryGrade")}
+											</a>
+										<#elseif categoryEvalReviewedStatus == "NOT_REVIEWED">
+											<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/viewCategoryGrade/${topic.getForum().getCategory().getId()}")}">
+												<img class="imgicon" src="${contextPath}/templates/${templateName}/images/eval-not-reviewed.png" alt="scores not reviewed icon" title="${I18n.getMessage("view-category-grade-not-reviewed-title")}"/>${I18n.getMessage("ForumListing.viewCategoryGrade")}
+											</a>
+										<#elseif categoryEvalReviewedStatus == "REVIEWED">
+											<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/viewCategoryGrade/${topic.getForum().getCategory().getId()}")}">
+												<#--img class="imgicon" src="${contextPath}/templates/${templateName}/images/grade.png" alt="grade icon" title="${I18n.getMessage("view-category-grade-title")}"/>${I18n.getMessage("ForumListing.viewCategoryGrade")}-->
+												<img class="imgicon" src="${contextPath}/templates/${templateName}/images/eval-reviewed.png" alt="scores reviewed icon" title="${I18n.getMessage("view-category-grade-reviewed-title")}"/>${I18n.getMessage("ForumListing.viewCategoryGrade")}
+											</a>
+										</#if>														
+									<#else>
+										<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/viewCategoryGrade/${topic.getForum().getCategory().getId()}")}">
+											${I18n.getMessage("ForumListing.notGradedOrReleased")}
+										</a>
+									</#if>
+								</#if>
+							</#if>
+						</#if>
+						</span>
+					</td>
+					
+					
+					<td class="row3" valign="center" align="middle" width="150" nowrap="nowrap">
+						<span class="gen">
+							<#--if !facilitator && ((categories.get(topic_index).getBlocked()) || (forums.get(topic_index).getBlocked()) || (topic.getBlocked()))>
+								${topic.postedBy.firstName?default("")} ${topic.postedBy.lastName?default("")}
+							<#else-->
+								<a class="toolUiLink" href="${JForumContext.encodeURL("/user/profile/${topic.postedBy.id}")}">${topic.postedBy.firstName?default("")} ${topic.postedBy.lastName?default("")}</a>
+							<#--/#if-->
+						</span>
+					</td>
+
+					<td class="row2" valign="center" nowrap="nowrap" align="middle">
+						<#if (topic.lastPostTime?length > 0)>
+							<span class="gen">${DateUtil.getStringFromDate(topic.lastPostTime)}<br />
+							
+							<#if !facilitator && !observer && ((topic.getForum().getCategory().getBlocked()) || (topic.getForum().getBlocked()) || (topic.getBlocked()))>
+								${topic.lastPostBy.firstName?default("")} ${topic.lastPostBy.lastName?default("")}
+							<#else>
+								<#--11/14/05 Murthy - updated to show First Name and Last name<a href="${JForumContext.encodeURL("/user/profile/${topic.lastPostBy.id}")}">${topic.lastPostBy.username}</a>#-->
+								<a class="toolUiLinkU" href="${JForumContext.encodeURL("/user/profile/${topic.lastPostBy.id}")}">${topic.lastPostBy.firstName?default("")} ${topic.lastPostBy.lastName?default("")}</a>
+	
+								<#assign startPage = ""/>
+								<#if (topic.totalReplies + 1 > postsPerPage?number)>
+									<#assign startPage = ((topic.totalReplies / postsPerPage?number)?int * postsPerPage?number) +"/"/>
+								</#if>
+					  
+								<a href="${JForumContext.encodeURL("/posts/list/${startPage}${topic.id}")}#${topic.lastPostId}"><img src="${contextPath}/templates/${templateName}/images/icon_latest_reply.gif" width="18" height="9" border="0" alt="last reply icon"/></a></span>
+							</#if>
+						</#if>		 
+					</td>
+					<td class="row3" valign="center" align="middle">
+						<span class="gen">
+						<#if !facilitator && !observer && ((topic.getForum().getCategory().getBlocked()) || (topic.getForum().getBlocked()) || (topic.getBlocked()))>
+							${topic.getForum().getName()}
+						<#else>
+							<a class="toolUiLink" href="${JForumContext.encodeURL("/forums/show/${topic.getForum().getId()}")}">${topic.getForum().getName()}</a>
+						</#if>
+						</span>
+					</td>
+
+				</tr>
+				</#list>		
+				<!-- END OF TOPICS LISTING -->
+				
+			</table>  
+		</td>
+	</tr>
+</table>
+<#include "bottom.htm"/>

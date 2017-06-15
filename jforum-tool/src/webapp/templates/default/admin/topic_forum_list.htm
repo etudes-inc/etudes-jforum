@@ -1,0 +1,89 @@
+<#--
+/**********************************************************************************
+ * $URL: https://source.etudes.org/svn/apps/jforum/tags/2.27/jforum-tool/src/webapp/templates/default/admin/topic_forum_list.htm $
+ * $Id: topic_forum_list.htm 6550 2013-12-10 00:01:48Z murthyt $ 
+ *********************************************************************************** 
+ * 
+ * Copyright (c) 2013 Etudes, Inc. 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
+ ***********************************************************************************/
+ -->
+<#include "header.htm"/>
+
+<form action="${contextPath}/jforum${extension}" method="post" name="form" id="form" accept-charset="${encoding}">
+<input type="hidden" name="action" value="topicsList" />
+<input type="hidden" name="module" value="${moduleName}" />
+<input type="hidden" name="securityHash" value="${securityHash}" />
+<input type="hidden" name="autosavenav" id="autosavenav" value="topicforumlist" />
+<input type="hidden" name="navid" id="navid" value="" />
+<input type="hidden" id="actionMode" name="actionMode" value=""/>
+
+<table class="forumline" cellspacing="1" cellpadding="3" width="100%" border="0">
+	<#if errorMessage?exists>
+		<tr>
+			<td align="center" colspan="6"><span class="redclass">${errorMessage}</span></td>
+		</tr>
+	</#if>
+	<#assign count = 1/>
+	<#list categories as category>
+		<tr>
+			<td colspan="4" class="row3">
+				&nbsp;&nbsp;&nbsp;<span class="gen"><b>${category.title}</b></span>
+			</td>
+		</tr>
+		<#assign forums = category.forums/>
+		<#list forums as forum>
+			<#if count%2 != 0>
+			<tr>
+				<td class="row1" width="1%">
+				</td>
+				<td class="row1" width="3%">
+				</td>
+				<td class="row1" width="66%">
+					<span class="gen">
+						&nbsp;<a class="toolUiLink" id="forumTopics" href="#" onclick="javascript:navtoedit('forumtopics', ${forum.id});return false;">${forum.name}</a>
+					</span>
+				</td>
+				<td class="row1" width="30%" nowrap="nowrap" align="left">
+					<span class="gen">
+						<#assign topicsCount = repository.getForumExportAndGradableTopicsCount(forum.id)/>
+						(${topicsCount} ${I18n.getMessage("Admin.topics.count.text")})
+					</span>
+				</td>
+			</tr>
+			<#else>
+			<tr>
+				<td width="1%">
+				</td>
+				<td width="3%">
+				</td>
+				<td width="66%">
+					<span class="gen">
+						&nbsp;<a class="toolUiLink" id="forumTopics" href="#" onclick="javascript:navtoedit('forumtopics', ${forum.id});return false;">${forum.name}</a>
+					</span>
+				</td>
+				<td width="30%" nowrap="nowrap" align="left">
+					<span class="gen">
+						<#assign topicsCount = repository.getForumExportAndGradableTopicsCount(forum.id)/>
+						(${topicsCount} ${I18n.getMessage("Admin.topics.count.text")})
+					</span>
+				</td>
+			</tr>
+			</#if>
+			<#assign count = count + 1/>
+		</#list>
+	</#list>
+	
+</table>
+</form>

@@ -1,0 +1,218 @@
+<#--
+/**********************************************************************************
+ * $URL: https://source.etudes.org/svn/apps/jforum/tags/2.27/jforum-tool/src/webapp/templates/default/pm_folder_form.htm $
+ * $Id: pm_folder_form.htm 8540 2014-08-29 22:18:25Z murthyt $ 
+ *********************************************************************************** 
+ * 
+ * Copyright (c) 2014 Etudes, Inc. 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ ***********************************************************************************/
+ -->
+<#include "header.htm"/>
+<table cellspacing="0" cellpadding="10" width="100%" align="center" border="0">
+	<tbody>
+		<tr>
+			<td>
+			<#--table cellspacing="0" cellpadding="0" width="100%" align="center" border="0">
+				<tbody>
+						<tr>
+							<td valign="top" align="middle" width="100%">
+								<table height="40" cellspacing="2" cellpadding="2" border="0">
+									<tbody>
+										<tr>
+											<td valign="bottom">
+												<span class="gen">
+												<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/inbox/date/d")}">
+												<img class="imgicon" src="${contextPath}/templates/${templateName}/images/pm_inbox.png" alt="inbox icon"/>${I18n.getMessage("PrivateMessage.inbox")}
+												</a>
+												</span>
+											</td>
+											<td valign="bottom">
+												&nbsp;&nbsp;
+												<span class="gen">
+												<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/sentbox/date/d")}">
+												<img class="imgicon" src="${contextPath}/templates/${templateName}/images/pm_sentbox.png" alt="sent icon"/>${I18n.getMessage("PrivateMessage.sentbox")}
+												</a>
+												</span>
+											</td>
+											<td valign="bottom">
+												&nbsp;&nbsp;
+												<span class="gen">
+												<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/drafts/date/d")}">
+												<#if (userPMDraftsCount?? && userPMDraftsCount > 0)>
+				                              		<img class="imgicon" src="${contextPath}/templates/${templateName}/images/pm_draft_folder.png" alt="pm draft icon"/>${I18n.getMessage("PrivateMessage.drafts")}: (${userPMDraftsCount}) 
+				                              	<#else>
+				                              		<img class="imgicon" src="${contextPath}/templates/${templateName}/images/pm_draft_folder.png" alt="pm draft icon"/>${I18n.getMessage("PrivateMessage.drafts")}&nbsp;
+				                              	</#if>												
+												</a>
+												</span>
+											</td>
+											<td valign="bottom">
+												&nbsp;&nbsp;
+												<span class="gen">
+												<a class="toolUiLink"  href="${JForumContext.encodeURL("/pm/folders")}">
+													<img class="imgicon" src="${contextPath}/templates/${templateName}/images/folders.png" alt="folders icon" title="${I18n.getMessage("PrivateMessage.folders")}"/><b>${I18n.getMessage("PrivateMessage.folders")}</b>
+												</a>
+												</span>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+						</tr>
+					</tbody>
+				</table-->
+				<br>
+				<table class="forumline" cellspacing="1" cellpadding="3" width="100%" border="0">
+					<tr>
+						<td width="180" rowspan="2" valign="top" nowrap="nowrap">
+							<#--start left menu-->
+						<table cellspacing="1" cellpadding="3" width="100%" border="0">								
+							<tr>
+								<td>
+									<span class="gen">
+									<#if !inbox?default(false)>
+									<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/inbox/date/d")}">
+									<#else>
+									<b>
+									</#if>
+									<img class="imgicon" src="${contextPath}/templates/${templateName}/images/pm_inbox.png" alt="inbox icon"/>${I18n.getMessage("PrivateMessage.inbox")}<#if (inboxUnreadCount??) && (inboxUnreadCount > 0)>&nbsp;<b>(${inboxUnreadCount})</b></#if>
+									<#if !inbox?default(false)>												
+									</a>
+									<#else>
+									</b>
+									</#if>
+									</span>								
+								</td>
+							</tr>
+							
+							<tr>
+								<td>
+									<span class="gen">
+									<#if !draftsList?default(false)>
+									<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/drafts/date/d")}">
+									<#else>
+									<b>
+									</#if>
+									<#if (userPMDraftsCount?? && userPMDraftsCount > 0)>
+	                              		<img class="imgicon" src="${contextPath}/templates/${templateName}/images/pm_draft_folder.png" alt="pm draft icon"/>${I18n.getMessage("PrivateMessage.drafts")}: (${userPMDraftsCount}) 
+	                              	<#else>
+	                              		<img class="imgicon" src="${contextPath}/templates/${templateName}/images/pm_draft_folder.png" alt="pm draft icon"/>${I18n.getMessage("PrivateMessage.drafts")}&nbsp;
+	                              	</#if>												
+									<#if !draftsList?default(false)>
+									</a>
+									<#else>
+									</b>
+									</#if>
+									</span>
+								</td>
+							</tr>
+							
+							<tr>
+								<td>								
+									<span class="gen">
+									<#if !sentbox?default(false)>
+									<a class="toolUiLink" href="${JForumContext.encodeURL("/pm/sentbox/date/d")}">
+									<#else>
+									<b>
+									</#if>
+									<img class="imgicon" src="${contextPath}/templates/${templateName}/images/pm_sentbox.png" alt="sent icon"/>${I18n.getMessage("PrivateMessage.sentbox")}
+									<#if !sentbox?default(false)>
+									</a>
+									<#else>
+									</b>
+									</#if>
+									</span>								
+								</td>
+							</tr>
+							
+							<tr>
+								<td>								
+									<span class="gen">
+									<a class="toolUiLink"  href="${JForumContext.encodeURL("/pm/folders")}">
+										<img class="imgicon" src="${contextPath}/templates/${templateName}/images/folders.png" alt="folders icon" title="${I18n.getMessage("PrivateMessage.folders")}"/><b>${I18n.getMessage("PrivateMessage.folders")}</b>
+									</a>
+									</span>								
+								</td>
+							</tr>
+							<#list pmFoldersList as pmFolder>
+							<#if (pmFolder.id > 0)>									
+							<#if (pmFolder.name?trim?length > 15)>
+								<#assign pmFolderName = (pmFolder.name?trim?substring(0, 15)) + "..."/>
+							<#else>
+								<#assign pmFolderName = pmFolder.name/>									
+							</#if>
+							<tr>
+								<td valign="middle" align="left"><img height="18" src="${contextPath}/templates/${templateName}/images/spacer.gif" width="22"/><span class="gen"><a class="toolUiLink"  href="${JForumContext.encodeURL("/pm/messages/${pmFolder.id}")}"><#if folderId?? && folderId == pmFolder.id><b>${pmFolderName}</b><#else>${pmFolderName}</#if><#if (pmFolder.unreadCount > 0)>&nbsp;<b>(${pmFolder.unreadCount})</b></#if></a></span></td>
+							</tr>
+							</#if>
+							</#list>
+							
+						</table>
+						<#--end left menu-->
+						
+						</td>
+					</tr>
+					<tr>
+						<td valign="top" style="border-left: #c8d1d7 2px solid;">
+								<table  cellspacing="1" cellpadding="3" width="100%" border="0">
+								<form action="${JForumContext.encodeURL("/jforum")}" method="post" name="privmsg_folder_add" id="privmsg_folder_add">
+								<input type="hidden" name="module" value="${moduleName}" />
+								<input type="hidden" id="action" name="action" value="saveFolder" />
+								<#if privateMessageFolder??>
+								<input type="hidden" name="folder_id" value="${privateMessageFolder.id}" />
+								</#if>
+								<tr>
+									<td width="100%" class="row3" colspan="2">
+										<span class="gen">
+											<#if privateMessageFolder??>
+											&nbsp;<b>${I18n.getMessage("PrivateMessage.modifyFolder")}</b>
+											<#else>
+											&nbsp;<b>${I18n.getMessage("PrivateMessage.createFolder")}</b>
+											</#if>
+										</span>
+									</td>
+								</tr>
+								<tr>
+								<td height="10" colspan="2"><img src="${contextPath}/templates/${templateName}/images/spacer.gif" alt="" width="1" height="10" /></td>
+								</tr>
+								<tr>
+									<td colspan="2">
+									<span class="gen">
+									&nbsp;${I18n.getMessage("PrivateMessage.folderName")}: <input type="text" name="folder_name" width="300" maxlength="80" value="<#if privateMessageFolder??>${privateMessageFolder.name}</#if>"/>
+									</span>
+									</td>
+								</tr>
+								<tr>
+								<td height="10" colspan="2"><img src="${contextPath}/templates/${templateName}/images/spacer.gif" alt="" width="1" height="10" /></td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										&nbsp;<input type="submit" id="submit" value="${I18n.getMessage("PrivateMessage.form.save")}" name="submit" accesskey="${I18n.getMessage("save-access")}" title="${I18n.getMessage("save-access-description")}" style="padding-left:2em;background: #eee url('${contextPath}/templates/${templateName}/images/save.png') .2em no-repeat;"/>
+									</td>
+								</tr>
+								</form>
+								<tr>
+									<td class="catBottom" align="right" colspan="2" height="28">
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+				
+			</td>
+		</tr>
+	</tbody>
+</table>
+<#include "bottom.htm"/>

@@ -1,0 +1,272 @@
+<#--
+/**********************************************************************************
+ * $URL: https://source.etudes.org/svn/apps/jforum/tags/2.27/jforum-tool/src/webapp/templates/default/admin/importexport_list.htm $
+ * $Id: importexport_list.htm 7392 2014-02-12 00:57:22Z murthyt $ 
+ *********************************************************************************** 
+ * 
+ * Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013, 2014 Etudes, Inc. 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
+ * 
+ * Portions completed before July 1, 2004 Copyright (c) 2003, 2004 Rafael Steil, All rights reserved, licensed under the BSD license. 
+ * http://www.opensource.org/licenses/bsd-license.php 
+ * 
+ * Redistribution and use in source and binary forms, 
+ * with or without modification, are permitted provided 
+ * that the following conditions are met: 
+ * 
+ * 1) Redistributions of source code must retain the above 
+ * copyright notice, this list of conditions and the 
+ * following disclaimer. 
+ * 2) Redistributions in binary form must reproduce the 
+ * above copyright notice, this list of conditions and 
+ * the following disclaimer in the documentation and/or 
+ * other materials provided with the distribution. 
+ * 3) Neither the name of "Rafael Steil" nor 
+ * the names of its contributors may be used to endorse 
+ * or promote products derived from this software without 
+ * specific prior written permission. 
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT 
+ * HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, 
+ * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL 
+ * THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE 
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, 
+ * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER 
+ * IN CONTRACT, STRICT LIABILITY, OR TORT 
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE 
+ ***********************************************************************************/
+ -->
+<#include "header.htm"/>
+
+<script language="javascript">
+function checkFileForImport()
+{
+  if (document.form.fileimporttopics.value.replace(/^\s*|\s*$/g, "").length == 0) {
+     alert("${I18n.getMessage("Import.SelectFile")}");
+	 document.form.fileimporttopics.focus();
+		return false;
+  }
+  return true;
+}
+
+function checkForumSelection()
+{
+	if (document.form1.chkAll.checked) 
+	{
+		return true;
+	}
+	else
+	{
+		var eleId = document.getElementsByName("forum_id");
+		var checkedStatus = false
+		
+		for (i = 0; i < eleId.length; i++) 
+		{						
+			if (eleId[i].checked)
+			{
+				checkedStatus = true;
+				break;
+			}
+		}
+		
+		if (!checkedStatus)
+		{
+			alert("${I18n.getMessage("ImportExport.Form.ForumsEmpty")}");
+				
+			return false;
+		}
+
+	}
+	return true;
+}
+
+
+function select_switch(status) 
+{
+	for (i = 0; i < document.form1.length; i++) 
+	{
+		document.form1.elements[i].checked = status;
+	}
+}
+
+var status = false;
+function select_switch() 
+{
+	if (status)
+	{
+		status = false;	
+	}
+	else
+	{
+		status = true;
+	}
+	
+	if (document.form1.chkAll.checked)
+	{
+		status = true;
+	}
+	
+	for (i = 1; i < document.form1.length; i++) 
+	{
+		if (document.form1.elements[i].name != "chkAll")
+		{
+			document.form1.elements[i].checked = status;
+		}
+	}
+}
+
+function toggle_switch(ele)
+{
+	var chkAllEle = document.getElementsByName("chkAll");
+	
+	if (!ele.checked)
+	{
+		for (i = 0; i < chkAllEle.length; i++) 
+		{
+			chkAllEle[i].checked = false;
+		}
+	}
+	else
+	{
+		var allStatus = true;
+		
+		var eleId = document.getElementsByName("forum_id");
+		
+		for (i = 0; i < eleId.length; i++) 
+		{						
+			if (!eleId[i].checked)
+			{
+				allStatus = false;
+				break;
+			}
+		}
+		
+		for (i = 0; i < chkAllEle.length; i++) 
+		{
+			chkAllEle[i].checked = allStatus;
+			status = allStatus;
+		}
+	}
+}
+</script>
+
+<table class="forumline" cellspacing="3" cellpadding="3" width="100%" border="0">
+	<tr>
+		<th class="thHead" valign="center" height="25">${I18n.getMessage("importexport.List.Title")}</th>
+	</tr>
+	<tr>
+		<td align="left"><span class="blueclass">${successmessage?default("")}</span><span class="redclass">${errormessage?default("")}</span></td>
+	</tr>
+	<tr>
+		<td align="left" class="row3"><span class="gen"><b>${I18n.getMessage("Admin.importTopics")}</b></span></td>
+	</tr>
+	<form action="${contextPath}/jforum${extension}" method="post" name="form" id="form" accept-charset="${encoding}" enctype="multipart/form-data" onSubmit="return checkFileForImport(this)">
+	<input type="hidden" name="action" value="importTopics" />
+	<input type="hidden" name="module" value="${moduleName}" />
+	<input type="hidden" name="securityHash" value="${securityHash}" />
+	<tr>
+		<td>
+			<span class="gen">
+				${I18n.getMessage("ImportExport.List.Import")}
+			</span>
+		</td>		
+	</tr>
+	<tr>
+		<td>
+			<input type='file' size='50' name='fileimporttopics'>
+		</td>		
+	</tr>
+	<tr>
+		<td><img src="${contextPath}/templates/${templateName}/images/spacer.gif" alt="" width="1" height="6" /></td>  
+	</tr>
+	<tr>
+		<td class="row3">
+			<span class="gen">
+			<input class="mainoption" type="submit" value="${I18n.getMessage("ImportExport.Form.Import")}" name="import" accesskey="${I18n.getMessage("import-access")}" title="${I18n.getMessage("import-access-description")}" style="padding-left:2em;background: #eee url('${contextPath}/templates/${templateName}/images/import.png') .2em no-repeat;"/>
+			</span>
+		</td>
+	</tr>
+	</form>
+	<tr>
+		<td><img src="${contextPath}/templates/${templateName}/images/spacer.gif" alt="" width="1" height="12" /></td>  
+	</tr>
+	<tr>
+		<td align="left" class="row3"><span class="gen"><b>${I18n.getMessage("Admin.exportTopics")}</b></span></td>
+	</tr>
+	<form action="${contextPath}/jforum${extension}" method="post" name="form1" id="form1" accept-charset="${encoding}" onsubmit="return checkForumSelection();">
+	<input type="hidden" name="action" value="exportTopics" />
+	<input type="hidden" name="module" value="${moduleName}" />
+	<input type="hidden" name="securityHash" value="${securityHash}" />
+	<tr>
+		<td>
+			<span class="gen">
+				${I18n.getMessage("ImportExport.List.Export")}
+			</span>
+		</td>
+	</tr>
+	<tr>
+		<td class="row1">
+		<#if (categories.size() > 0)>
+			<input type="checkbox" id="chkAll" name="chkAll" onclick="javascript:select_switch();"><span class="gen"><b>${I18n.getMessage("Admin.exportTopics.all")}</b></span>
+		</#if>
+		</td>
+		</tr>
+		<#list categories as category>
+		<tr>
+			<td class="row3">
+				<span class="gen"><b>${category.title}</b></span>
+			</td>
+		</tr>
+		<#assign rowClass = ""/>
+		<#list category.getForums() as forum>
+		<#if forum_index % 2 != 0>
+			<#assign rowClass = "row1">
+		<#else>
+		    <#assign rowClass = "">
+		</#if>
+		<tr>
+			<td class="${rowClass}">
+				<span class="gen">
+					<input type="checkbox" name="forum_id" value="${forum.id}" onclick="javascript:toggle_switch(this);">${forum.name}
+				</span>
+			</td>
+		</tr>
+		</#list>
+		</#list>
+	<tr>
+		<td><img src="${contextPath}/templates/${templateName}/images/spacer.gif" alt="" width="1" height="6" /></td>  
+	</tr>
+	<tr>
+		<td class="row3">
+			<span class="gen">
+			<input class="mainoption" type="submit" value="${I18n.getMessage("ImportExport.Form.Export")}" name="export_topics" id="export_topics" accesskey="${I18n.getMessage("export-access")}" title="${I18n.getMessage("export-access-description")}" style="padding-left:2em;background: #eee url('${contextPath}/templates/${templateName}/images/export.png') .2em no-repeat;"/>
+			</span>
+		</td>
+	</tr>
+	<tr>
+		<td><img src="${contextPath}/templates/${templateName}/images/spacer.gif" alt="" width="1" height="6" /></td>  
+	</tr>
+	</form>
+</table>
+
+<#include "bottom.htm"/>

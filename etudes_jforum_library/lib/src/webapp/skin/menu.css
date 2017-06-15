@@ -1,0 +1,67 @@
+table.navbar
+{
+	margin: 0px;
+	padding: 0px; 
+	border: 0px; 
+}
+
+table.menu
+{
+	margin: 0px;
+	padding: 0px;
+}
+
+td.menuNormal
+{
+	padding: 0px;
+	vertical-align: top;
+	background-color: white;
+}
+
+td.menuHover
+{
+	padding: 0px;
+	vertical-align: top;
+	background-color: silver;
+}
+
+div.menuNormal
+{	
+	display: none;
+}
+
+div.menuHover
+{
+	border: 1px solid silver;
+	background-color: white;
+	display: inline;
+	position: absolute;
+}
+
+a.menuitem:link
+{
+	text-decoration: none;
+	background-color: white;
+	display: block;
+}
+
+a.menuitem:visited
+{
+	text-decoration: none;
+	background-color: white;
+	display: block;
+}
+
+a.menuitem:hover
+{
+	text-decoration: none;
+	background-color: silver;
+	display: block;
+}
+
+a.menuitem:active
+{
+	text-decoration: none;
+	background-color: silver;
+	display: block;
+}

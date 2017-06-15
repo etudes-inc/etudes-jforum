@@ -1,0 +1,11 @@
+<!-- BEGIN ERROR STACK TRACE
+${stackTrace}
+END ERROR STACK TRACE-->
+<div id="exception"></div>
+<#assign message = "An error has occurred. For detailed stack trace, please see the page's source code.<pre>" + message + "</pre>"/>
+<#if templateName??>
+<#include "${templateName}/message.htm"/>
+<#else>
+<#include "default/message.htm"/>
+</#if>
+

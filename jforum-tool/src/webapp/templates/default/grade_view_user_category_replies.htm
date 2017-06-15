@@ -1,0 +1,230 @@
+<#--
+/**********************************************************************************
+ * $URL: https://source.etudes.org/svn/apps/jforum/tags/2.27/jforum-tool/src/webapp/templates/default/grade_view_user_category_replies.htm $
+ * $Id: grade_view_user_category_replies.htm 7874 2014-04-24 17:19:24Z murthyt $ 
+ *********************************************************************************** 
+ * 
+ * Copyright (c) 2009, 2011, 2012, 2013, 2014 Etudes, Inc. 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
+ ***********************************************************************************/
+ -->
+<#include "header.htm"/>
+<#import "../macros/pagination.ftl" as pagination>
+
+<script type="text/javascript" src="${contextPath}/templates/${templateName}/js/jquery.js"></script>
+<script type="text/javascript" src="${contextPath}/templates/${templateName}/js/post_show.js"></script>
+
+<script type="text/javascript">
+var CONTEXTPATH = "${contextPath}";
+var SERVLET_EXTENSION  = "${extension}";
+</script>
+
+<script type="text/javascript">
+
+function confirmDelete()
+{
+	if (confirm("${I18n.getMessage("Moderation.ConfirmPostDelete")}")) {
+		return true;
+	}
+
+	return false;
+}
+
+function gradeCategory(cid, uid)
+{
+	var features = "height=480,width=620,left=60,top=40,toolbar=no,directories=no,status=no,location=no,menubar=no,scrollbars=yes,resizable=no";
+	var winHandle = window.open("${contextPath}/gradeForum/showEvalCategoryUser/"+ cid +"/"+ uid +"${extension}",null, features);
+		
+	winHandle.focus();
+
+}
+
+function sendPM(uid)
+{
+	var features = "height=560,width=670,left=60,top=40,toolbar=no,directories=no,status=no,location=no,menubar=no,scrollbars=yes,resizable=no";
+	var winHandle = window.open("${contextPath}/pm/sendTo/"+ uid +"${extension}",null, features);
+	winHandle.focus();
+}
+
+var divPostContentWidth = document.body.offsetWidth - (32 + 32 + 128 + 8);
+
+if (divPostContentWidth < 450)
+{
+	divPostContentWidth = 450;
+}
+</script>
+
+<table cellspacing="0" cellpadding="10" width="100%" align="center" border="0">
+	<tr>
+		<td valign="top">
+			<table cellspacing="2" cellpadding="2" width="100%" align="center" border="0">
+				<tr>
+					<td valign="bottom" align="left" colspan="2">
+						<span class="gen"><b>${category.title}</b></span>
+					</td>
+				</tr>
+				<tr>
+					<td height="10"><img src="${contextPath}/templates/${templateName}/images/spacer.gif" alt="" width="1" height="10" /></td>
+				</tr>
+				<tr>
+					<td class="gen" valign="center" align="left" width="100%">
+						<span class="gen">
+							<a class="toolUiLinkU" href="${JForumContext.encodeURL("/forums/list")}">${I18n.getMessage("ForumListing.forumIndex")}</a>	-&gt; <a class="toolUiLinkU" href="${JForumContext.encodeURL("/forums/list")}#${category.id}">${category.title}</a>
+						</span>
+					</td>
+					<td valign="center" nowrap="nowrap" align="right"><@pagination.doGradeUserPagination action, presUserId, category.id/></td>
+				</tr>
+				<tr colspan="2">
+					<td height="10"><img src="${contextPath}/templates/${templateName}/images/spacer.gif" alt="" width="1" height="10" /></td>
+				</tr>
+				<tr>
+					<td valign="center" align="left" colspan="2">
+						<#--a href="${JForumContext.encodeURL("/gradeForum/evalCategoryList/${category.id}/name/a")}"><img src="${contextPath}/templates/${templateName}/images/${imagesI18n}/grading_home.gif" alt="grades home icon"/></a-->
+						<span class="gen">
+						<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalCategoryList/${category.id}/${sort_column}/${sort_direction}")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/grade.png"/>${I18n.getMessage("Grade.home")}</a>
+						</span>
+					</td>
+				</tr>
+			</table>		
+			
+			<table class="forumline" cellspacing="1" cellpadding="3" width="100%" border="0">
+				<tr>
+					<th class="thLeft" nowrap="nowrap" width="15%" height="26">${I18n.getMessage("PostShow.author")}</th>
+					<th class="thRight" nowrap="nowrap" width="85%">${I18n.getMessage("PostShow.messageTitle")}</th>
+				</tr>
+
+				<!-- POST LISTING -->
+				<#assign rowColor = ""/>
+				<#list posts as post>
+					
+					  <#if post_index % 2 == 0>
+						<#assign rowColor = "row1">
+					  <#else>
+					    <#assign rowColor = "row2">
+					  </#if>
+					
+
+					<#assign user = post.getPostedBy()/>
+					<#assign forum = post.getTopic().getForum()/>
+					<tr>
+						<td colspan="2">
+							<#include "user_category_post_show_action_buttons_inc.htm"/>
+						</td>
+					</tr>
+
+					<tr>
+						<!-- Username -->
+						<#assign rowspan = "3"/>
+						<#assign useSignature = (user.attachSignatureEnabled && user.signature?exists && user.signature?length > 0 && post.isSignatureEnabled())/>
+
+						<#if forum?? && forum.isAllowTopicPostLikes()>
+							<#if useSignature>
+								<#assign rowspan = "2"/>
+							<#else>
+								<#assign rowspan = "1"/>
+							</#if>
+						<#else>
+							<#if useSignature>
+								<#assign rowspan = "3"/>
+							<#else>
+								<#assign rowspan = "2"/>
+							</#if>
+						</#if>
+
+						<td class="${rowColor}" valign="top" align="left" rowspan="${rowspan}">
+							<#include "post_show_user_inc.htm"/>
+						</td>
+
+						<!-- Message -->
+						<td class="${rowColor}" valign="top">
+							<script>
+							document.write ('<div class="postbody" style="width:'+ divPostContentWidth +'px; overflow:auto;">');
+							</script>
+							<span class="postbody">${post.text?default("")}</span>
+							<script>
+							document.write ('</div>');
+							</script>
+
+							<!-- Attachments -->
+							<#if post.hasAttachments() && (canDownloadAttachments || attachmentsEnabled)>
+								<#assign attachments = post.attachments/>
+								<#include "post_show_attachments_inc.htm"/>
+							</#if>
+						</td>
+					</tr>
+
+					<#if useSignature>
+						<tr>
+							<td colspan="2" class="${rowColor}" width="100%" height="28"><hr/><span class="gensmall">${user.signature}</span></td>
+						</tr>
+					</#if>
+
+					<tr>
+						<#if forum?? && forum.isAllowTopicPostLikes()>
+						<td class="${rowColor}" valign="bottom" nowrap="nowrap" height="28" width="100%" colspan="1">
+							<#include "post_show_user_likes_inc.htm"/>
+						</td>
+						<td class="${rowColor}" valign="bottom" nowrap="nowrap" height="28" width="100%" colspan="1">
+							<#include "post_show_user_profile_inc.htm"/>
+						</td>
+						<#else>
+						<td class="${rowColor}" valign="bottom" nowrap="nowrap" height="28" width="100%" colspan="2">
+							<#include "post_show_user_profile_inc.htm"/>
+						</td>
+						</#if>
+					</tr>
+
+					<tr>
+						<td class="spaceRow" colspan="2" height="10"><img src="${contextPath}/templates/${templateName}/images/spacer.gif" alt="" width="1" height="10" /></td>
+					</tr>
+				</#list>
+				<!-- END OF POST LISTING -->
+				<#--
+				<tr align="center">
+					<td class="catBottom" colspan="2" height="28">
+						<table cellspacing="0" cellpadding="0" border="0">
+							<tr>
+								<td align="center"><span class="gensmall">&nbsp;</span></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				-->
+			</table>
+			
+			<table cellspacing="2" cellpadding="2" width="100%" align="center" border="0">
+				<tr>
+					<td valign="center" align="left" colspan="2">
+						<#--a href="${JForumContext.encodeURL("/gradeForum/evalCategoryList/${category.id}/name/a")}"><img src="${contextPath}/templates/${templateName}/images/${imagesI18n}/grading_home.gif" alt="grades home icon"/></a-->
+						<span class="gen">
+						<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalCategoryList/${category.id}/${sort_column}/${sort_direction}")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/grade.png"/>${I18n.getMessage("Grade.home")}</a>
+						</span>
+					</td>
+				</tr>
+				<tr colspan="2">
+					<td height="10"><img src="${contextPath}/templates/${templateName}/images/spacer.gif" alt="" width="1" height="10" /></td>
+				</tr>
+				<tr>
+					<td class="gen" valign="center" align="left" width="70%">
+						<span class="gen">
+							<a class="toolUiLinkU" href="${JForumContext.encodeURL("/forums/list")}">${I18n.getMessage("ForumListing.forumIndex")}</a>	-&gt; <a class="toolUiLinkU" href="${JForumContext.encodeURL("/forums/list")}#${category.id}">${category.title}</a>
+						</span>
+					</td >
+					<td valign="center" nowrap="nowrap" align="right" width="30%"><@pagination.doGradeUserPagination action, presUserId, category.id/></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<#include "bottom.htm"/>			

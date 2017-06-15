@@ -1,0 +1,267 @@
+<#--
+/**********************************************************************************
+ * $URL: https://source.etudes.org/svn/apps/jforum/tags/2.27/jforum-tool/src/webapp/templates/default/grade_view_user_forum_replies.htm $
+ * $Id: grade_view_user_forum_replies.htm 7874 2014-04-24 17:19:24Z murthyt $ 
+ *********************************************************************************** 
+ * 
+ * Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013, 2014 Etudes, Inc. 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
+ * 
+ * Portions completed before July 1, 2004 Copyright (c) 2003, 2004 Rafael Steil, All rights reserved, licensed under the BSD license. 
+ * http://www.opensource.org/licenses/bsd-license.php 
+ * 
+ * Redistribution and use in source and binary forms, 
+ * with or without modification, are permitted provided 
+ * that the following conditions are met: 
+ * 
+ * 1) Redistributions of source code must retain the above 
+ * copyright notice, this list of conditions and the 
+ * following disclaimer. 
+ * 2) Redistributions in binary form must reproduce the 
+ * above copyright notice, this list of conditions and 
+ * the following disclaimer in the documentation and/or 
+ * other materials provided with the distribution. 
+ * 3) Neither the name of "Rafael Steil" nor 
+ * the names of its contributors may be used to endorse 
+ * or promote products derived from this software without 
+ * specific prior written permission. 
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT 
+ * HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, 
+ * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL 
+ * THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE 
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, 
+ * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER 
+ * IN CONTRACT, STRICT LIABILITY, OR TORT 
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE 
+ ***********************************************************************************/
+ -->
+<#include "header.htm"/>
+<#import "../macros/pagination.ftl" as pagination>
+
+<script type="text/javascript" src="${contextPath}/templates/${templateName}/js/jquery.js"></script>
+<script type="text/javascript" src="${contextPath}/templates/${templateName}/js/post_show.js"></script>
+
+<script type="text/javascript">
+var CONTEXTPATH = "${contextPath}";
+var SERVLET_EXTENSION  = "${extension}";
+</script>
+
+<script type="text/javascript">
+function confirmDelete()
+{
+	if (confirm("${I18n.getMessage("Moderation.ConfirmPostDelete")}")) {
+		return true;
+	}
+
+	return false;
+}
+
+function gradeForum(fid, uid)
+{
+	var features = "height=480,width=620,left=60,top=40,toolbar=no,directories=no,status=no,location=no,menubar=no,scrollbars=yes,resizable=no";
+	var winHandle = window.open("${contextPath}/gradeForum/showEvalForumUser/"+ fid +"/"+ uid +"${extension}",null, features);
+		
+	winHandle.focus();
+
+}
+
+function sendPM(uid)
+{
+	var features = "height=560,width=670,left=60,top=40,toolbar=no,directories=no,status=no,location=no,menubar=no,scrollbars=yes,resizable=no";
+	var winHandle = window.open("${contextPath}/pm/sendTo/"+ uid +"${extension}",null, features);
+	winHandle.focus();
+}
+
+var divPostContentWidth = document.body.offsetWidth - (32 + 32 + 128 + 8);
+
+if (divPostContentWidth < 450)
+{
+	divPostContentWidth = 450;
+}
+</script>
+
+<table cellspacing="0" cellpadding="10" width="100%" align="center" border="0">
+	<tr>
+		<td valign="top">
+			<table cellspacing="2" cellpadding="2" width="100%" align="center" border="0">
+				<tr>
+					<td valign="bottom" align="left" colspan="3">
+						<span class="gen"><b>${forum.name}</b></span>
+					</td>
+				</tr>
+				<tr>
+					<td height="10" colspan="2"><img src="${contextPath}/templates/${templateName}/images/spacer.gif" alt="" width="1" height="10" /></td>
+				</tr>
+				<tr>
+					<td class="gen" valign="middle" align="left">
+						<span class="gen">
+							<a class="toolUiLinkU" href="${JForumContext.encodeURL("/forums/list")}">${I18n.getMessage("ForumListing.forumIndex")}</a> -&gt;  <a class="toolUiLinkU" href="${JForumContext.encodeURL("/forums/list")}#${forum.category.id}">${forum.category.title}</a> -&gt;  <a class="toolUiLinkU" href="${JForumContext.encodeURL("/forums/show/${forum.id}")}">${forum.name}</a>
+						</span>
+					</td>
+					
+					<td valign="middle" nowrap="nowrap" align="right"><@pagination.doGradeUserPagination action, presUserId, forum.id/></td>
+				</tr>
+				<tr>
+					<td height="10" colspan="2"><img src="${contextPath}/templates/${templateName}/images/spacer.gif" alt="" width="1" height="10" /></td>
+				</tr>
+				<tr>
+					<td valign="center" align="left" colspan="2">
+						<span class="gen">
+						<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalForumList/${forum.id}/${sort_column}/${sort_direction}")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/grade.png"/>${I18n.getMessage("Grade.home")}</a>
+						</span>
+					</td>
+				</tr>
+			</table>		
+			
+			<table class="forumline" cellspacing="1" cellpadding="3" width="100%" border="0">
+				<tr>
+					<th class="thLeft" nowrap="nowrap" width="15%" height="26">${I18n.getMessage("PostShow.author")}</th>
+					<th class="thRight" nowrap="nowrap" width="85%">${I18n.getMessage("PostShow.messageTitle")}</th>
+				</tr>
+
+				<!-- POST LISTING -->
+				<#assign rowColor = ""/>
+				<#list posts as post>
+					
+					  <#if post_index % 2 == 0>
+						<#assign rowColor = "row1">
+					  <#else>
+					    <#assign rowColor = "row2">
+					  </#if>
+					
+
+					<#assign user = post.getPostedBy()/>
+					<tr>
+						<td colspan="2">
+							<#include "user_post_show_action_buttons_inc.htm"/>
+						</td>
+					</tr>
+
+					<tr>
+						<!-- Username -->
+						<#assign rowspan = "3"/>
+						<#assign useSignature = (user.attachSignatureEnabled && user.signature?exists && user.signature?length > 0 && post.isSignatureEnabled())/>
+
+						<#if forum?? && forum.isAllowTopicPostLikes()>
+							<#if useSignature>
+								<#assign rowspan = "2"/>
+							<#else>
+								<#assign rowspan = "1"/>
+							</#if>
+						<#else>
+							<#if useSignature>
+								<#assign rowspan = "3"/>
+							<#else>
+								<#assign rowspan = "2"/>
+							</#if>
+						</#if>
+
+						<td class="${rowColor}" valign="top" align="left" rowspan="${rowspan}">
+							<#include "post_show_user_inc.htm"/>
+						</td>
+
+						<!-- Message -->
+						<td class="${rowColor}" valign="top">
+							<script>
+							document.write ('<div class="postbody" style="width:'+ divPostContentWidth +'px; overflow:auto;">');
+							</script>
+							<span class="postbody">${post.text?default("")}</span>
+							<script>
+							document.write ('</div>');
+							</script>
+
+							<!-- Attachments -->
+							<#if post.hasAttachments() && (canDownloadAttachments || attachmentsEnabled)>
+								<#assign attachments = post.attachments/>
+								<#include "post_show_attachments_inc.htm"/>
+							</#if>
+						</td>
+					</tr>
+
+					<#if useSignature>
+						<tr>
+							<td colspan="2" class="${rowColor}" width="100%" height="28"><hr/><span class="gensmall">${user.signature}</span></td>
+						</tr>
+					</#if>
+
+					<tr>
+						<#if forum?? && forum.isAllowTopicPostLikes()>
+						<td class="${rowColor}" valign="bottom" nowrap="nowrap" height="28" width="100%" colspan="1">
+							<#include "post_show_user_likes_inc.htm"/>
+						</td>
+						<td class="${rowColor}" valign="bottom" nowrap="nowrap" height="28" width="100%" colspan="1">
+							<#include "post_show_user_profile_inc.htm"/>
+						</td>
+						<#else>
+						<td class="${rowColor}" valign="bottom" nowrap="nowrap" height="28" width="100%" colspan="2">
+							<#include "post_show_user_profile_inc.htm"/>
+						</td>
+						</#if>
+					</tr>
+
+					<tr>
+						<td class="spaceRow" colspan="2" height="10"><img src="${contextPath}/templates/${templateName}/images/spacer.gif" alt="" width="1" height="10" /></td>
+					</tr>
+				</#list>
+				<!-- END OF POST LISTING -->
+
+				<tr align="center">
+					<td class="catBottom" colspan="2" height="28">
+						<table cellspacing="0" cellpadding="0" border="0">
+							<tr>
+								<td align="center"><span class="gensmall">&nbsp;</span></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+			
+			<table cellspacing="2" cellpadding="2" width="100%" align="center" border="0">
+				<tr>
+					<td valign="middle" align="left" colspan="2">
+						<span class="gen">
+						<a class="toolUiLink" href="${JForumContext.encodeURL("/gradeForum/evalForumList/${forum.id}/${sort_column}/${sort_direction}")}"><img class="imgicon" src="${contextPath}/templates/${templateName}/images/grade.png"/>${I18n.getMessage("Grade.home")}</a>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td height="10" colspan="2"><img src="${contextPath}/templates/${templateName}/images/spacer.gif" alt="" width="1" height="10" /></td>
+				</tr>
+				<tr>
+					<td class="gen" valign="middle" align="left">
+						<span class="gen">
+							<a class="toolUiLinkU" href="${JForumContext.encodeURL("/forums/list")}">${I18n.getMessage("ForumListing.forumIndex")}</a> -&gt;  <a class="toolUiLinkU" href="${JForumContext.encodeURL("/forums/list")}#${forum.category.id}">${forum.category.title}</a> -&gt;  <a class="toolUiLinkU" href="${JForumContext.encodeURL("/forums/show/${forum.id}")}">${forum.name}</a>
+						</span>
+					</td>
+					
+					<td valign="middle" nowrap="nowrap" align="right"><@pagination.doGradeUserPagination action, presUserId, forum.id/></td>
+				</tr>
+				<tr>
+					<td height="10" colspan="2"><img src="${contextPath}/templates/${templateName}/images/spacer.gif" alt="" width="1" height="10" /></td>
+				</tr>				
+			</table>
+		</td>
+	</tr>
+</table>
+<#include "bottom.htm"/>			
